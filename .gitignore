@@ -1,0 +1,18 @@
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# venv
+.venv/
+
+# secrets
+.env
+*.env
+
+# misc
+.DS_Store
+Thumbs.db
+.ipynb_checkpoints/
+*.log
