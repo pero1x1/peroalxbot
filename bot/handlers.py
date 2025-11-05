@@ -12,11 +12,11 @@ from telegram.constants import ChatAction
 from bot.utils import validate_ticker, validate_amount
 from core.selection import run_pipeline, append_error_log
 
-# Состояния диалога (если используешь пошаговый вариант)
+# состояния диалога 
 T_TICKER, T_AMOUNT = range(2)
 
 
-# ===== БАЗОВЫЕ КОМАНДЫ =====
+# команды
 async def start_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "Привет! Я учебный бот прогноза акций.\n"
@@ -46,7 +46,7 @@ async def about_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(text)
 
 
-# ===== БЫСТРЫЙ РЕЖИМ /predict AAPL 1000 =====
+# быстрый режим /predict AAPL 1000
 async def predict_short_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args
     if len(args) != 2:
@@ -60,13 +60,12 @@ async def predict_short_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not validate_ticker(ticker) or amount is None:
         return await update.message.reply_text("Пример: /predict NVDA 500")
 
-    # положим тикер в user_data и переиспользуем predict_run
     context.user_data["ticker"] = ticker
     update.message.text = str(amount)  # чтобы predict_run прочитал сумму
     return await predict_run(update, context)
 
 
-# ===== ДИАЛОГОВЫЙ РЕЖИМ (/predict → тикер → сумма) =====
+# диалговый режим (/predict → тикер → сумма)
 async def predict_enter_ticker(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Введи тикер, например AAPL:")
     return T_TICKER
@@ -150,7 +149,7 @@ async def cancel_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return -1
 
 
-# ===== /source — выслать zip с исходниками =====
+# zip с исходниками
 async def source_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
     Пакуем проект в zip и отправляем. Игнорируем .venv и __pycache__.
@@ -167,7 +166,7 @@ async def source_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parts = rel.split(os.sep)
         return (".venv" in parts) or ("__pycache__" in parts)
 
-    # копируем «чистую» версию
+    # чистая версия 
     for dirpath, dirnames, filenames in os.walk(root):
         if _skip(dirpath):
             continue
