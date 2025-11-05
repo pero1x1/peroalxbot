@@ -17,7 +17,7 @@ def _mape(y_true, y_pred):
 
 def fit_eval_ml(train: pd.Series, test: pd.Series):
     X_tr, y_tr = make_lag_features(train)
-    # В тесте делаем признаки из train+части test, но таргет — реальный test, с выравниванием по датам
+    # делаем признаки из train + части test, но таргет реальный test, с выравниванием по датам
     joined = pd.concat([train, test])
     X_all, y_all = make_lag_features(joined)
     X_te = X_all.loc[test.index]  # берем строки по датам теста
