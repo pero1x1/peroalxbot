@@ -81,6 +81,43 @@ copy .env.example .env; notepad .env; python -m bot.main
 * `/source` — прислать zip с исходниками проекта
 
 ---
+## Примеры для проверки
+
+Большие тех-компании:
+AAPL (Apple), MSFT (Microsoft), GOOGL (Alphabet), AMZN (Amazon), META (Meta),
+NFLX (Netflix), NVDA (NVIDIA), AMD (Advanced Micro Devices), INTC (Intel), IBM, ORCL.
+
+Авто/EV:
+TSLA (Tesla), F (Ford), GM (General Motors), RIVN (Rivian), NIO.
+
+Финансы:
+JPM (JPMorgan), BAC (Bank of America), C (Citigroup), V (Visa), MA (Mastercard), BRK-B (Berkshire Hathaway B).
+
+Ритейл и потребительский сектор:
+WMT (Walmart), COST (Costco), TGT (Target), NKE (Nike), KO (Coca-Cola), PEP (PepsiCo), MCD (McDonald’s).
+
+Энергетика:
+XOM (Exxon Mobil), CVX (Chevron), BP, SHEL.
+
+ETF (индексы и широкие рынки):
+SPY (S&P 500), QQQ (Nasdaq-100), DIA (Dow Jones), IWM (Russell 2000), VOO (S&P 500).
+
+Быстрые примеры команд:
+```
+
+/predict AAPL 1000
+/predict MSFT 1500
+/predict NVDA 1200
+/predict TSLA 1000
+/predict SPY 2000
+
+```
+
+Подсказки:
+- Для тикеров с дефисом используйте именно дефис: BRK-B (а не BRK.B).
+- Если Yahoo временно недоступен, проект автоматически переключится на Stooq (DATA_SOURCE=auto).
+- Для некоторых зарубежных бирж нужны суффиксы (например, `.ME`), но для стабильности лучше тестировать на США/ETF выше.
+```
 
 ## Как это работает
 
