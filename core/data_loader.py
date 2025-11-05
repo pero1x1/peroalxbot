@@ -26,7 +26,6 @@ def _try_yahoo(ticker: str, period: str = "2y"):
             pass
         time.sleep(1.2 * (attempt + 1))
 
-    # B) руками start/end
     try:
         end = pd.Timestamp.today().normalize()
         start = end - pd.Timedelta(days=730)
@@ -39,7 +38,6 @@ def _try_yahoo(ticker: str, period: str = "2y"):
     except Exception:
         pass
 
-    # C) Ticker().history
     try:
         t = yf.Ticker(ticker)
         hist = t.history(period=period, interval="1d", auto_adjust=True)
@@ -54,7 +52,7 @@ def _try_stooq(ticker: str):
         from pandas_datareader import data as pdr
     except Exception:
         return None
-    # Пробуем «как есть» и «.US»
+        
     for sym in (ticker, f"{ticker}.US"):
         try:
             st = pdr.DataReader(sym, "stooq")
@@ -73,7 +71,7 @@ def _try_stooq(ticker: str):
 
 def load_close_series(ticker: str, period: str = "2y") -> pd.Series:
     """
-    Надёжная загрузка: сначала Stooq (почти всегда живой), затем Yahoo.
+    Надёжная загрузка: сначала Stooq, затем Yahoo.
     Можно переопределить через .env: DATA_SOURCE=stooq|yahoo|auto
     """
     if PREFER_SOURCE in ("stooq", "auto"):
@@ -87,7 +85,7 @@ def load_close_series(ticker: str, period: str = "2y") -> pd.Series:
     if s is not None:
         return s
 
-    # Если выбирали auto, но Stooq не пробовали — попробуем в конце
+    # если auto, но Stooq не пробовали попробуем в конце
     if PREFER_SOURCE == "yahoo":
         s = _try_stooq(ticker)
         if s is not None:
