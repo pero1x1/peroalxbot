@@ -174,4 +174,3 @@ project/
 * Windows, macOS или Linux
 * Интернет-доступ (для загрузки котировок с Yahoo/Stooq)
 
-```
