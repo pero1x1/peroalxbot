@@ -6,7 +6,7 @@
 
 ## Быстрый старт
 
-```powershell
+
 # 1) Python 3.10+
 py -3.10 -m venv .venv
 .\.venv\Scripts\Activate.ps1
@@ -20,7 +20,7 @@ pip install -r requirements.txt
 
 # 4) Запуск
 python -m bot.main
-````
+
 
 В Telegram: найдите бота (например, `@peroalxbot`) и отправьте команды из раздела ниже.
 
