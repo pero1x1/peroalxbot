@@ -1,28 +1,76 @@
+````markdown
 # Telegram-бот прогнозов акций (Time Series)
 
-Учебный проект: бот загружает котировки за 2 года, обучает 3 модели (ML Ridge, ETS, ARIMA; NN — fallback), выбирает лучшую по RMSE, строит прогноз на 30 дней, даёт сигналы BUY/SELL и считает условную прибыль.
+Бот загружает котировки за 2 года, обучает 3 модели (ML Ridge, ETS, ARIMA; NN — fallback), выбирает лучшую по RMSE, строит прогноз на 30 дней, даёт сигналы BUY/SELL и считает условную прибыль.
 
-> Дисклеймер: бот предназначен только для учебных целей, это **не** инвестиционная рекомендация.
+> Дисклеймер: проект предназначен только для учебных целей и **не** является инвестиционной рекомендацией.
+
+---
 
 ## Быстрый старт
 
+Требования: установлен **Python 3.10+** и доступ в интернет.
 
-# 1) Python 3.10+
+### 1) Клонировать репозиторий
+```bash
+git clone https://github.com/pero1x1/peroalxbot.git
+cd peroalxbot
+````
+
+### 2) Создать виртуальное окружение и установить зависимости
+
+**Windows (PowerShell):**
+
+```powershell
 py -3.10 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-
-# 2) Зависимости
+pip install -U pip
 pip install -r requirements.txt
+```
 
-# 3) Настройки
-# Скопируй .env.example -> .env и вставь токен своего бота
-# (переменные: BOT_TOKEN, DATA_SOURCE=auto|stooq|yahoo)
+**macOS / Linux:**
 
-# 4) Запуск
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -r requirements.txt
+```
+
+### 3) Настроить токен бота
+
+Скопируйте пример и вставьте токен от BotFather.
+
+```bash
+# Windows
+copy .env.example .env && notepad .env
+# macOS / Linux
+cp .env.example .env && nano .env
+```
+
+Переменные:
+
+```
+BOT_TOKEN=ВАШ_ТОКЕН_ОТ_BOTFATHER
+DATA_SOURCE=auto   # auto|stooq|yahoo (auto включает резервный источник)
+```
+
+### 4) Запуск бота
+
+```bash
 python -m bot.main
+```
 
+В Telegram отправьте боту: `/start`, `/about`, `/predict AAPL 1000`.
 
-В Telegram: найдите бота (например, `@peroalxbot`) и отправьте команды из раздела ниже.
+**Подсказка (Windows, в две строки):**
+
+```powershell
+py -3.10 -m venv .venv; .\.venv\Scripts\Activate.ps1; pip install -r requirements.txt
+copy .env.example .env; notepad .env; python -m bot.main
+```
+
+---
 
 ## Команды
 
@@ -30,21 +78,25 @@ python -m bot.main
 * `/help` — как вводить параметры
 * `/predict TICKER AMOUNT` — быстрый режим, пример: `/predict AAPL 1000`
 * `/predict` — диалог: тикер → сумма
-* `/about` — краткое описание и дисклеймер
+* `/about` — описание и дисклеймер
 * `/source` — прислать zip с исходниками проекта
+
+---
 
 ## Как это работает
 
-* **Данные:** `yfinance` c ретраями + fallback на Stooq (`pandas-datareader`). Индекс делаем tz-naive, ресемпл до B-дней с `ffill()`/`bfill()`.
+* **Данные:** `yfinance` с ретраями + fallback на Stooq (`pandas-datareader`). Индекс делаем tz-naive, ресемпл до B-дней с `ffill()`/`bfill()`.
 * **Сплит:** последние 60 дней — тест (адаптация при малом количестве данных).
-* **Фичи (ML):** лаги `L1..L30`, скользящие mean/std окна 7 и 14; RidgeCV. Прогноз 30 дней — рекурсивно.
-* **Статистика:** ETS (`ExponentialSmoothing`) и SARIMAX c маленькой сеткой `(p,d,q) ∈ {0..2}×{0,1}×{0..2}`.
+* **Фичи (ML):** лаги `L1..L30`, скользящие mean/std окна 7 и 14; `RidgeCV`. Прогноз на 30 дней — рекурсивно.
+* **Статистика:** ETS (`ExponentialSmoothing`) и SARIMAX с маленькой сеткой `(p,d,q) ∈ {0..2}×{0,1}×{0..2}`.
 * **Нейросеть:** LSTM при наличии TensorFlow, иначе fallback на `MLPRegressor`.
-* **Метрики:** RMSE — основной критерий выбора; показываем ещё MAPE.
-* **Визуализация:** последние ~180 дней истории, 30 дней прогноза пунктиром, вертикальная линия «сегодня». PNG уходит в чат и сохраняется в `examples/`.
-* **Сигналы:** локальные минимумы → BUY, следующие максимумы → SELL; считаем последовательные пары и условную прибыль по введённой сумме.
+* **Метрики:** RMSE — основной критерий; дополнительно показывается MAPE.
+* **Визуализация:** ~180 дней истории + 30 дней прогноза пунктиром, вертикальная линия «сегодня». PNG уходит в чат и сохраняется в `examples/`.
+* **Сигналы:** локальные минимумы → BUY, следующие максимумы → SELL; считаются последовательные пары и условная прибыль.
 * **Логи:** `logs.csv` — одна строка на запрос:
   `user_id,timestamp,ticker,amount,best_model,rmse,mape,horizon,est_profit,status,error_msg`.
+
+---
 
 ## Структура проекта
 
@@ -57,7 +109,7 @@ project/
 ├─ examples/            # сохраняемые PNG прогнозов
 ├─ scr/                 # скриншоты для README/отчёта
 ├─ logs.csv             # логи сессий
-├─ .env.example         # образец env
+├─ .env.example         # пример env
 ├─ requirements.txt
 └─ README.md
 ```
@@ -72,9 +124,11 @@ project/
 | --------------------------- | ------------------------- |
 | ![predict](scr/predict.png) | ![source](scr/source.png) |
 
-Примеры графиков сохраняются в `examples/` и выглядят так:
+Примеры графиков сохраняются в `examples/`, например:
 
 ![AAPL](examples/AAPL_20251105_165954.png)
+
+---
 
 ## Требования
 
@@ -82,33 +136,4 @@ project/
 * Windows, macOS или Linux
 * Интернет-доступ (для загрузки котировок с Yahoo/Stooq)
 
-## Лицензия
-
-MIT (по желанию добавьте LICENSE).
-
-````
-
----
-
-# 3) requirements.txt (проверь, что в репозитории именно так)
-
-```text
-python-telegram-bot==20.7
-python-dotenv==1.0.1
-pandas==2.2.2
-numpy==1.26.4
-scikit-learn==1.4.2
-statsmodels==0.14.2
-matplotlib==3.8.4
-scipy==1.11.4
-yfinance==0.2.38
-pandas-datareader==0.10.0
-````
-
----
-
-## Что дальше
-
-1. `git add README.md .gitignore` → `git commit -m "Add README and .gitignore"` → `git push`.
-2. Открой репозиторий — проверь, что Markdown отрисовался, картинки видны.
-3. Если хочешь, добавим бейджи и ссылку на твоего бота/демо-видео.
+```
