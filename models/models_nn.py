@@ -22,7 +22,7 @@ def _make_windows(s: pd.Series, win: int = 30):
     return np.array(X), np.array(y)
 
 def fit_eval_nn(train: pd.Series, test: pd.Series):
-    # Пытаемся LSTM → если нет TF, используем MLP как fallback
+    # LSTM если нет TF, используем MLP как fallback
     try:
         import tensorflow as tf  # noqa
         from tensorflow.keras import Sequential
@@ -65,7 +65,7 @@ def fit_eval_nn(train: pd.Series, test: pd.Series):
         return mlp, rmse, mape, "NN(MLP-fallback)"
 
 def forecast_nn(series: pd.Series, model, horizon: int = 30):
-    # Работает и для LSTM, и для MLP — оба принимают окно длиной win
+    # работает и для LSTM, и для MLP оба принимают
     win = 30
     window = series.values.astype(float)[-win:].tolist()
     preds = []
@@ -78,7 +78,7 @@ def forecast_nn(series: pd.Series, model, horizon: int = 30):
             preds.append(y_next)
             window.append(y_next)
     except Exception:
-        # MLP-ветка
+        # MLP ветка
         for _ in range(horizon):
             x = np.array(window[-win:]).reshape(1, -1)
             y_next = float(model.predict(x)[0])
