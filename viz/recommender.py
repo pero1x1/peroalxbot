@@ -3,17 +3,15 @@ import pandas as pd
 from scipy.signal import find_peaks
 
 def make_signals_and_profit(pred: np.ndarray, amount: float, current_price: float):
-    """
-    Ищем локальные минимумы как BUY и следующие за ними локальные максимумы как SELL.
-    Рассчитываем профит по парной свинговой стратегии на количестве акций = amount/current_price.
-    """
+    # ищем локальные минимумы как BUY и следующие за ними локальные максимумы как SELL.
+    # рассчитываем профит по парной свинговой стратегии на количестве акций = amount/current_price.
     # создаем псевдо-индекс дат бизнес-днями от завтра
     idx = pd.bdate_range(pd.Timestamp.today().normalize(), periods=len(pred), freq="B")
     s = pd.Series(pred, index=idx)
 
     # пики (SELL)
     peaks, _ = find_peaks(s.values)
-    # впадины (BUY) — пики на инвертированном сигнале
+    # впадины (BUY) 
     troughs, _ = find_peaks(-s.values)
 
     signals = []
@@ -26,7 +24,7 @@ def make_signals_and_profit(pred: np.ndarray, amount: float, current_price: floa
     # сортируем по дате
     signals.sort(key=lambda x: x[1])
 
-    # Парная стратегия: после BUY ищем первый SELL строго позже
+    # после BUY ищем первый SELL строго позже
     shares = amount / current_price
     profit = 0.0
     i = 0
