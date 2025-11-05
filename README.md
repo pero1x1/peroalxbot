@@ -158,7 +158,10 @@ project/
 
 | /predict (диалог)           | /source                   |
 | --------------------------- | ------------------------- |
-| ![predict](./scr/predict.png) | ![source](./scr/source.png) |
+| ![predict](./scr/predict.png) | ![source](./scr/source.png) | 
+
+
+![predict](./scr/predict.png)
 
 Примеры графиков сохраняются в `examples/`, например:
 
