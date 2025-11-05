@@ -154,11 +154,11 @@ project/
 
 | /start                  | /about                  |
 | ----------------------- | ----------------------- |
-| ![start](scr/start.png) | ![about](scr/about.png) |
+| ![start](./scr/start.png) | ![about](./scr/about.png) |
 
 | /predict (диалог)           | /source                   |
 | --------------------------- | ------------------------- |
-| ![predict](scr/predict.png) | ![source](scr/source.png) |
+| ![predict](./scr/predict.png) | ![source](./scr/source.png) |
 
 Примеры графиков сохраняются в `examples/`, например:
 
