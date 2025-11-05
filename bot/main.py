@@ -16,14 +16,13 @@ def main():
 
     app = ApplicationBuilder().token(token).build()
 
-    # Базовые команды
+    # команды
     app.add_handler(CommandHandler("start", h.start_cmd))
     app.add_handler(CommandHandler("help", h.help_cmd))
     app.add_handler(CommandHandler("about", h.about_cmd))
     app.add_handler(CommandHandler("source", h.source_cmd))
 
-    # Быстрый режим: /predict <TICKER> <AMOUNT>
-    # Регекс матчится только если после /predict есть РОВНО два токена.
+    # быстрый режим: /predict <TICKER> <AMOUNT>.
     app.add_handler(
         MessageHandler(
             filters.Regex(r"^/predict(\s+\S+){2}\s*$"),
@@ -31,7 +30,7 @@ def main():
         )
     )
 
-    # Диалоговый режим: /predict → тикер → сумма
+    # диалоговый режим: /predict → тикер → сумма
     conv = ConversationHandler(
         entry_points=[CommandHandler("predict", h.predict_enter_ticker)],
         states={
